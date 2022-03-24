@@ -17,67 +17,10 @@ const int PIN_PWM_Q1 = 4;
 const int PIN_PWM_Q2 = 5;
 const int PIN_PWM_Q3 = 6;
 
-enum Command { NONE = 0, ENABLE = 1 };
-
 class Device {
 public:
-  class : public atsamd::i2c::Slave {
-  public:
-    struct __attribute__((packed)) {
-      unsigned char command = Command::NONE;
-      union {
-        struct __attribute__((packed)) {
-          unsigned char enabled;
-        } enable;
-      };
-    } rxBuffer;
 
-    Device *that;
-
-    void init(Device *that) {
-      this->that = that;
-      Slave::init(0x50, 0, atsamd::i2c::AddressMode::MASK, &target::SERCOM0,
-                  target::gclk::CLKCTRL::GEN::GCLK0, PIN_SLAVE_SDA,
-                  target::port::PMUX::PMUXE::C, PIN_SLAVE_SCL,
-                  target::port::PMUX::PMUXE::C);
-    }
-
-    virtual int getTxByte(int index) {
-      return index < sizeof(that->state)
-                 ? ((unsigned char *)&that->state)[index]
-                 : 0;
-    }
-
-    bool commandIs(Command command, int index, int value, int paramsSize) {
-      return rxBuffer.command == command && index == paramsSize;
-    }
-
-    virtual bool setRxByte(int index, int value) {
-
-      if (index < sizeof(rxBuffer)) {
-        ((unsigned char *)&rxBuffer)[index] = value;
-
-        if (commandIs(Command::ENABLE, index, value, sizeof(rxBuffer.enable))) {
-        }
-
-        return true;
-
-      } else {
-        return false;
-      }
-    }
-
-  } slave;
-
-  struct __attribute__((packed)) {
-    unsigned char duty = 10;
-    bool direction : 1;
-    bool endStop1 : 1;
-    bool endStop2 : 1;
-    bool reserved : 5;
-    int actSteps;
-    short currentMA = 0xFFFF;
-  } state;
+  Uplink uplink;
 
   void init() {
 
@@ -93,22 +36,15 @@ public:
     // while (target::GCLK.STATUS.getSYNCBUSY())
     //   ;
 
-    slave.init(this);
+    uplink.init(0x50, &target::SERCOM0, target::gclk::CLKCTRL::GEN::GCLK0,
+               PIN_SLAVE_SDA, target::port::PMUX::PMUXE::C, PIN_SLAVE_SCL,
+               target::port::PMUX::PMUXE::C);
   }
-
-  void checkState() {
-
-    bool running = state.duty != 0;
-    target::PORT.OUTCLR.setOUTCLR(!running << PIN_LED);
-    target::PORT.OUTSET.setOUTSET(running << PIN_LED);
-  }
-
-  void setSpeed(unsigned int speed) {}
 };
 
 Device device;
 
-void interruptHandlerSERCOM0() { device.slave.interruptHandlerSERCOM(); }
+void interruptHandlerSERCOM0() { device.uplink.interruptHandlerSERCOM(); }
 void interruptHandlerEIC() {}
 
 void initApplication() {
