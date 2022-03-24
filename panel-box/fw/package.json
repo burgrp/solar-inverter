@@ -22,6 +22,7 @@
   "silicon": {
     "sources": [
       "src/uplink.cpp",
+      "src/pwm.cpp",
       "src/main.cpp"
     ],
     "symbols": {
