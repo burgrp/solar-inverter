@@ -23,21 +23,18 @@ public:
     setPerpheralMux(pinQ2, muxQ2);
     setPerpheralMux(pinQ3, muxQ3);
 
+    tcc->PER = tcc->PER.bare().setPER(199); // gives ~40kHz CC=100 for 50% duty
+    tcc->WAVE = tcc->WAVE.bare().setWAVEGEN(target::tcc::WAVE::WAVEGEN::NPWM);
+
     tcc->CTRLA = tcc->CTRLA.bare()
                             .setPRESCALER(target::tcc::CTRLA::PRESCALER::DIV1)
                             .setENABLE(true);
-
-    tcc->PER.setPER(0xFFFFFF);
-
+   
     while (tcc->SYNCBUSY)
       ;
-
-    // needs to be 0xFE to achieve full-on on CC=0xFF
-    // tc->COUNT8.PER.setPER(0xFE);
-    // tc->COUNT8.CC[0].setCC(0);
   }
 
-  void set(unsigned int dc) {
-    // tc->COUNT8.CC[0].setCC(dc);
+  void set(unsigned int channel, unsigned int duty) {
+    tcc->CC[channel].setCC(duty);
   }
 };

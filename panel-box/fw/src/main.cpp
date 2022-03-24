@@ -61,6 +61,10 @@ public:
 
     pwm.init(&target::TCC0, PIN_PWM_Q1, MUX_PWM_Q1, PIN_PWM_Q2, MUX_PWM_Q2,
              PIN_PWM_Q3, MUX_PWM_Q3);
+
+    pwm.set(0, 10);
+    pwm.set(1, 50);
+    pwm.set(2, 100);
   }
 };
 
