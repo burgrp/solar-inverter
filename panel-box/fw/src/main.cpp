@@ -36,12 +36,16 @@ public:
 
     void init(Device *that) {
       this->that = that;
-      Slave::init(0x50, 0, atsamd::i2c::AddressMode::MASK, 0, target::gclk::CLKCTRL::GEN::GCLK0, PIN_SLAVE_SDA,
-                  PIN_SLAVE_SCL, target::port::PMUX::PMUXE::C);
+      Slave::init(0x50, 0, atsamd::i2c::AddressMode::MASK, &target::SERCOM0,
+                  target::gclk::CLKCTRL::GEN::GCLK0, PIN_SLAVE_SDA,
+                  target::port::PMUX::PMUXE::C, PIN_SLAVE_SCL,
+                  target::port::PMUX::PMUXE::C);
     }
 
     virtual int getTxByte(int index) {
-      return index < sizeof(that->state) ? ((unsigned char *)&that->state)[index] : 0;
+      return index < sizeof(that->state)
+                 ? ((unsigned char *)&that->state)[index]
+                 : 0;
     }
 
     bool commandIs(Command command, int index, int value, int paramsSize) {
@@ -66,7 +70,7 @@ public:
   } slave;
 
   struct __attribute__((packed)) {
-    unsigned char duty;
+    unsigned char duty = 10;
     bool direction : 1;
     bool endStop1 : 1;
     bool endStop2 : 1;
@@ -74,8 +78,6 @@ public:
     int actSteps;
     short currentMA = 0xFFFF;
   } state;
-
-  int unattendedTimeoutCounter;
 
   void init() {
 
@@ -107,7 +109,7 @@ public:
 Device device;
 
 void interruptHandlerSERCOM0() { device.slave.interruptHandlerSERCOM(); }
-void interruptHandlerEIC() {  }
+void interruptHandlerEIC() {}
 
 void initApplication() {
 
@@ -121,7 +123,8 @@ void initApplication() {
   device.init();
 
   // enable interrupts
-  target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(target::interrupts::External::SERCOM0 & 0x03, 3);
+  target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
+      target::interrupts::External::SERCOM0 & 0x03, 3);
   target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
   target::NVIC.ISER.setSETENA(1 << target::interrupts::External::EIC);
 }

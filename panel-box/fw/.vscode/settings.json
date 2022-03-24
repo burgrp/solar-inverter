@@ -5,5 +5,13 @@
     },
     "cSpell.enableFiletypes": [
         "!cpp"
+    ],
+    "cSpell.words": [
+        "atsamd",
+        "cmsis",
+        "dcmotor",
+        "safeboot",
+        "samd",
+        "systick"
     ]
 }

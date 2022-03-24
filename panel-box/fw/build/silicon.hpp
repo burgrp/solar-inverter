@@ -87,9 +87,10 @@ namespace target {
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-application-events/application-events.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-generic-timer/generic-timer.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-systick-timer/systick-timer.cpp"
-#include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-safeboot/safeboot.cpp"
+#include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-i2c/common.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-i2c/master.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-i2c/slave.cpp"
+#include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-safeboot/safeboot.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/src/pwm.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/src/main.cpp"
 
