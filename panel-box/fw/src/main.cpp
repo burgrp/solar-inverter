@@ -32,19 +32,15 @@ public:
   void init() {
 
     // enable safeboot
+
     atsamd::safeboot::init(PIN_SAFE_BOOT, false, PIN_LED);
 
     // MCU clocked at 8MHz
+
     target::SYSCTRL.OSC8M.setPRESC(target::sysctrl::OSC8M::PRESC::_1);
     genericTimer::clkHz = 8E6;
 
-    // enable interrupts
-    target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
-        target::interrupts::External::SERCOM0 & 0x03, 3);
-    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
-    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::EIC);
-
-    // TCC0 for PWM
+    // TCC0 clocked at 8MHz
 
     target::PM.APBCMASK.setTCC0(true);
 
@@ -56,11 +52,20 @@ public:
     while (target::GCLK.STATUS.getSYNCBUSY())
       ;
 
+    // initialize subsystems
+
     uplink.init(8, &target::SERCOM0, target::gclk::CLKCTRL::GEN::GCLK0,
                 PIN_SLAVE_SDA, MUX_SLAVE_SDA, PIN_SLAVE_SCL, MUX_SLAVE_SCL);
 
     pwm.init(&target::TCC0, PIN_PWM_Q1, MUX_PWM_Q1, PIN_PWM_Q2, MUX_PWM_Q2,
              PIN_PWM_Q3, MUX_PWM_Q3);
+
+    // enable interrupts
+
+    target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
+        target::interrupts::External::SERCOM0 & 0x03, 3);
+    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
+    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::EIC);
 
     pwm.set(0, 10);
     pwm.set(1, 50);
