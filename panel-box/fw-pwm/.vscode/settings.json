@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "limits": "cpp",
+        "typeinfo": "cpp"
+    },
+    "cSpell.enableFiletypes": [
+        "!cpp"
+    ],
+    "cSpell.words": [
+        "atsamd",
+        "cmsis",
+        "dcmotor",
+        "safeboot",
+        "samd",
+        "systick"
+    ]
+}

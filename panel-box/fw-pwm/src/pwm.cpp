@@ -23,7 +23,7 @@ public:
     setPerpheralMux(pinQ2, muxQ2);
     setPerpheralMux(pinQ3, muxQ3);
 
-    tcc->PER = tcc->PER.bare().setPER(199); // gives ~40kHz CC=100 for 50% duty
+    tcc->PER = tcc->PER.bare().setPER(65); // gives ~40kHz CC=100 for 50% duty
     tcc->WAVE = tcc->WAVE.bare().setWAVEGEN(target::tcc::WAVE::WAVEGEN::NPWM);
 
     tcc->CTRLA = tcc->CTRLA.bare()

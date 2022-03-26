@@ -14,7 +14,6 @@ class Uplink: public atsamd::i2c::Slave {
 public:
   struct __attribute__((packed)) {
     unsigned char error = 0;
-    unsigned short voltage = 40000;
   } state;
 
   void init(int address, volatile target::sercom::Peripheral *sercom,

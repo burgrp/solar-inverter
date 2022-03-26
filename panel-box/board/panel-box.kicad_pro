@@ -323,6 +323,18 @@
     [
       "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55",
       ""
+    ],
+    [
+      "2b28879a-0f39-435b-88e3-7fa17bbf03aa",
+      "Flyback channel"
+    ],
+    [
+      "37d6a3eb-e471-41fa-a376-d4444243a722",
+      "Flyback channel1"
+    ],
+    [
+      "b35d9ee9-6bb3-447a-a01d-4fd3e743d740",
+      "Flyback channel2"
     ]
   ],
   "text_variables": {}
