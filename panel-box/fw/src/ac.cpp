@@ -2,7 +2,7 @@ class AC {
 
   volatile target::tc::Peripheral *tc;
   int step;
-  int polarity;
+  bool polarity;
   PWM *pwm;
   int level;
 
@@ -47,7 +47,7 @@ public:
       pwm->set(polarity, acSine[step]);
       if (step == generated::AC_TIMER_STEPS - 1) {
         step = 0;
-        polarity = ~polarity & 1;
+        polarity = !polarity;
       } else {
         step++;
       }
