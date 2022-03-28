@@ -4,6 +4,9 @@ class AC {
   int step;
   int polarity;
   PWM *pwm;
+  int level;
+
+  unsigned char acSine[generated::AC_TIMER_STEPS];
 
 public:
   void init(volatile target::tc::Peripheral *tc,
@@ -30,32 +33,25 @@ public:
             .setMODE(target::tc::COUNT16::CTRLA::MODE::COUNT16)
             .setPRESCALER(generated::AC_TIMER_PRESCALER);
 
-    start();
+    setLevel(256);
   }
 
-  void start() {
-    step = 0;
-    polarity = 0;
+  void setLevel(int level) {
+      for (int i = 0; i < generated::AC_TIMER_STEPS; i++) {
+          acSine[i] = level * generated::AC_SINE[i] >> 24;
+      }
   }
 
   void interruptHandlerTC() {
     if (tc->COUNT16.INTFLAG.getOVF()) {
-
-      target::PORT.OUTSET = 1 << 8;
-
-      pwm->set(polarity, 256 * generated::AC_SINE[step] >> 24);
+      pwm->set(polarity, acSine[step]);
       if (step == generated::AC_TIMER_STEPS - 1) {
-
         step = 0;
         polarity = ~polarity & 1;
-
-        // target::PORT.OUTTGL = 1 << 8;
       } else {
         step++;
       }
       tc->COUNT16.INTFLAG.setOVF(true);
-
-      target::PORT.OUTCLR = 1 << 8;
     }
   }
 };

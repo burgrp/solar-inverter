@@ -7,6 +7,10 @@ const acTimerPrescaler = 1024;
 const pwmTimerSteps = Math.floor(clkFreqHz / pwmTimerPrescaler / pwmTimerFreqHz);
 const acTimerSteps = Math.floor(clkFreqHz / acTimerPrescaler / acTimerFreqHz / 2);
 
+if (pwmTimerSteps > 255) {
+    throw `pwmTimerSteps=${pwmTimerSteps} can't fit to byte, which is needed for buffered acSine`;
+}
+
 console.info(`namespace generated {
 
 const int CLK_FREQ_HZ = ${clkFreqHz};
