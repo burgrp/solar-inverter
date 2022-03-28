@@ -91,10 +91,9 @@ namespace target {
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-i2c/master.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-i2c/slave.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/node_modules/@si14/si-atsamd-safeboot/safeboot.cpp"
-#include "/home/paul/git/solar-inverter/panel-box/fw/src/generated.cpp"
-#include "/home/paul/git/solar-inverter/panel-box/fw/src/ac.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/src/uplink.cpp"
-#include "/home/paul/git/solar-inverter/panel-box/fw/src/pwm.cpp"
+#include "/home/paul/git/solar-inverter/panel-box/fw/src/adc.cpp"
+#include "/home/paul/git/solar-inverter/panel-box/fw/src/reg.cpp"
 #include "/home/paul/git/solar-inverter/panel-box/fw/src/main.cpp"
 
 #endif // SILICON_HPP

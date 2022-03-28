@@ -17,15 +17,13 @@
     "build": "node_modules/.bin/silicon build --size",
     "openocd": "openocd -f interface/cmsis-dap.cfg -f target/at91samdXX.cfg",
     "flash": "node_modules/.bin/silicon build --size --flash",
-    "dev": "node_modules/.bin/silicon build  --size --flash --loop",
-    "generate": "node generate.js >src/generated.cpp"
+    "dev": "node_modules/.bin/silicon build  --size --flash --loop"
   },
   "silicon": {
     "sources": [
-      "src/generated.cpp",
-      "src/ac.cpp",
       "src/uplink.cpp",
-      "src/pwm.cpp",
+      "src/adc.cpp",
+      "src/reg.cpp",
       "src/main.cpp"
     ],
     "symbols": {

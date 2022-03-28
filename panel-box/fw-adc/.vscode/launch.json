@@ -7,7 +7,7 @@
         {
             "type": "by-gdb",
             "request": "launch",
-            "name": "MCU debug",
+            "name": "Launch(remote)",
             "program": "${workspaceRoot}/build/build.elf",
             "cwd": "${workspaceRoot}",
             "remote": {
@@ -17,15 +17,6 @@
                 "execfile": "${workspaceRoot}/build/build.elf"
             },
             "debuggerPath": "gdb-multiarch"
-        },
-        {
-            "name": "Sine calc",
-            "program": "${workspaceFolder}/generate.js",
-            "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "pwa-node"
         }
     ]
 }

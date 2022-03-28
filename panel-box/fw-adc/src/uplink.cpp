@@ -13,8 +13,11 @@ class Uplink: public atsamd::i2c::Slave {
 
 public:
   struct __attribute__((packed)) {
-    unsigned char protocol = 1;
-    unsigned char error = 0;
+    unsigned char version = 0;
+    unsigned char error;
+    unsigned char inputVoltage;
+    unsigned char outputVoltage;
+    unsigned char outputCurrent;
   } state;
 
   void init(int address, volatile target::sercom::Peripheral *sercom,

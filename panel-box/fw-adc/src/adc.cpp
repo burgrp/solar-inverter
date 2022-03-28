@@ -1,7 +1,5 @@
 
-class ADC : public applicationEvents::EventHandler {
-
-  int eventId;
+class ADC {
 
   static void setPerpheralMux(int pin, target::port::PMUX::PMUXE mux) {
     target::PORT.PINCFG[pin].setPMUXEN(true);
@@ -13,23 +11,30 @@ class ADC : public applicationEvents::EventHandler {
   }
 
 public:
+  static const int MAX_INPUTS = 10;
+  const int AIN_TO_PIN[MAX_INPUTS] = {2, 3, 4, 5, 6, 7, 14, 15, 10, 11};
+
+  int firstAin;
+  int lastAin;
+
   class Callback {
   public:
-    virtual void adcConversionFinished() = 0;
+    virtual void adcRead(int ain, int value) = 0;
   };
 
-  int voltageConv = 0;
+  int input = 0;
+
   Callback *callback;
 
-  void init(int pin, target::port::PMUX::PMUXE mux, int ain,
-            Callback *callback) {
+  void init(int firstAin, int lastAin, Callback *callback) {
 
+    this->firstAin = firstAin;
+    this->lastAin = lastAin;
     this->callback = callback;
 
-    eventId = applicationEvents::createEventId();
-    handle(eventId);
-
-    setPerpheralMux(pin, mux);
+    for (int ain = firstAin; ain <= lastAin; ain++) {
+      setPerpheralMux(AIN_TO_PIN[ain], target::port::PMUX::PMUXE::B);
+    }
 
     target::PM.APBCMASK.setADC(true);
 
@@ -41,10 +46,8 @@ public:
     while (target::GCLK.STATUS.getSYNCBUSY())
       ;
 
-    target::ADC.INPUTCTRL =
-        target::ADC.INPUTCTRL.bare()
-            .setMUXNEG(target::adc::INPUTCTRL::MUXNEG::GND)
-            .setMUXPOS(target::adc::INPUTCTRL::MUXPOS::PIN1);
+    target::ADC.INPUTCTRL = target::ADC.INPUTCTRL.bare().setMUXNEG(
+        target::adc::INPUTCTRL::MUXNEG::GND);
     target::PORT.PINCFG[3].setINEN(true);
     target::ADC.INTENSET = target::ADC.INTENSET.bare().setRESRDY(true);
 
@@ -62,17 +65,23 @@ public:
             .setADJRES(4);
     target::ADC.CTRLA = target::ADC.CTRLA.bare().setENABLE(true);
 
+    target::ADC.INPUTCTRL.setMUXPOS((target::adc::INPUTCTRL::MUXPOS)firstAin);
     target::ADC.SWTRIG = target::ADC.SWTRIG.bare().setSTART(true);
   }
 
   void interruptHandlerADC() {
     if (target::ADC.INTFLAG.getRESRDY()) {
-      voltageConv = target::ADC.RESULT;
-      applicationEvents::schedule(eventId);
+      int ain = (int)target::ADC.INPUTCTRL.getMUXPOS();
+      int value = target::ADC.RESULT;
+      callback->adcRead(ain, value);
+      ain++;
+      if (ain > lastAin) {
+        ain = firstAin;
+      }
+      target::ADC.INPUTCTRL.setMUXPOS((target::adc::INPUTCTRL::MUXPOS)ain);
       target::ADC.SWTRIG = target::ADC.SWTRIG.bare().setSTART(true);
       target::PORT.OUTTGL = 1 << 8;
     }
   }
 
-  void onEvent() { callback->adcConversionFinished(); }
 };

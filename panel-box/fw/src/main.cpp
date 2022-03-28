@@ -1,84 +1,77 @@
-const int PIN_LED = 8;
-const int PIN_SAFE_BOOT = 9;
+const int LED_PIN = 8;
+const int SAFE_BOOT_PIN = 9;
 
-const int PIN_SLAVE_SDA = 14;
-const int PIN_SLAVE_SCL = 15;
-const target::port::PMUX::PMUXE MUX_SLAVE_SDA = target::port::PMUX::PMUXE::C;
-const target::port::PMUX::PMUXE MUX_SLAVE_SCL = target::port::PMUX::PMUXE::C;
+const int SLAVE_SDA_PIN = 14;
+const int SLAVE_SCL_PIN = 15;
+const target::port::PMUX::PMUXE SLAVE_SDA_MUX = target::port::PMUX::PMUXE::C;
+const target::port::PMUX::PMUXE SLAVE_SCL_MUX = target::port::PMUX::PMUXE::C;
 
-// const int PIN_MASTER_SDA = 22;
-// const int PIN_MASTER_SCL = 23;
-// const target::port::PMUX::PMUXE MUX_MASTER_SDA =
-// target::port::PMUX::PMUXE::C; const target::port::PMUX::PMUXE MUX_MASTER_SCL
-// = target::port::PMUX::PMUXE::C;
+const int SYNC_PIN = 16;
+const int SYNC_EXTIN = 0;
 
-// const int PIN_SYNC = 16;
-// const int EXT_IN_SYNC = 0;
+const int SENSE_I_PIN = 2;
+const int SENSE_U_PIN = 3;
 
-// const int PIN_SENSE_I = 2;
-const int PIN_SENSE_U = 3;
-const target::port::PMUX::PMUXE MUX_SENSE_U = target::port::PMUX::PMUXE::B;
-const int AIN_SENSE_U = 1;
+const int PWM_PIN = 4;
+const int PWM_COUNT = 2;
+const target::port::PMUX::PMUXE PWM_MUX = target::port::PMUX::PMUXE::F;
+const int PWM_FREQ = 120000;
 
-// const int PIN_PWM_Q1 = 4;
-// const int PIN_PWM_Q2 = 5;
-// const int PIN_PWM_Q3 = 6;
-// const target::port::PMUX::PMUXE MUX_PWM_Q1 = target::port::PMUX::PMUXE::F;
-// const target::port::PMUX::PMUXE MUX_PWM_Q2 = target::port::PMUX::PMUXE::F;
-// const target::port::PMUX::PMUXE MUX_PWM_Q3 = target::port::PMUX::PMUXE::F;
-
-class Device: public ADC::Callback {
+class Device {
 public:
   Uplink uplink;
-  ADC adc;
+  PWM pwm;
+  AC ac;
 
   void init() {
 
     // enable safeboot
 
-    atsamd::safeboot::init(PIN_SAFE_BOOT, false, PIN_LED);
+    atsamd::safeboot::init(SAFE_BOOT_PIN, false, LED_PIN);
 
     // MCU clocked at 8MHz
 
+    genericTimer::clkHz = generated::CLK_FREQ_HZ;
     target::SYSCTRL.OSC8M.setPRESC(target::sysctrl::OSC8M::PRESC::_1);
-    genericTimer::clkHz = 8E6;
 
     // TCC0 clocked at 8MHz
 
-    // target::PM.APBCMASK.setTCC0(true);
+    target::PM.APBCMASK.setTCC0(true);
 
-    // target::GCLK.CLKCTRL = target::GCLK.CLKCTRL.bare()
-    //                            .setID(target::gclk::CLKCTRL::ID::TCC0)
-    //                            .setGEN(target::gclk::CLKCTRL::GEN::GCLK0)
-    //                            .setCLKEN(true);
+    target::GCLK.CLKCTRL = target::GCLK.CLKCTRL.bare()
+                               .setID(target::gclk::CLKCTRL::ID::TCC0)
+                               .setGEN(target::gclk::CLKCTRL::GEN::GCLK0)
+                               .setCLKEN(true);
 
-    // while (target::GCLK.STATUS.getSYNCBUSY())
-    //   ;
+    while (target::GCLK.STATUS.getSYNCBUSY())
+      ;
 
     // initialize subsystems
 
     uplink.init(8, &target::SERCOM0, target::gclk::CLKCTRL::GEN::GCLK0,
-                PIN_SLAVE_SDA, MUX_SLAVE_SDA, PIN_SLAVE_SCL, MUX_SLAVE_SCL);
+                SLAVE_SDA_PIN, SLAVE_SDA_MUX, SLAVE_SCL_PIN, SLAVE_SCL_MUX);
 
+    pwm.init(&target::TCC0, PWM_PIN, PWM_MUX, PWM_COUNT, PWM_FREQ);
 
-    adc.init(PIN_SENSE_U, MUX_SENSE_U, AIN_SENSE_U, this);
+    ac.init(&target::TC1);
 
     // enable interrupts
 
     target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
         target::interrupts::External::SERCOM0 & 0x03, 3);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
-    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::ADC);
-  }
+    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::EIC);
+    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TC1);
 
-  void adcConversionFinished() {
-    uplink.state.voltage = adc.voltageConv;
+    pwm.set(0, ((256 * generated::QUARTER_AC_CC[generated::AC_TIMER_STEPS / 4 - 1])>>24)-1);
+    pwm.set(1, (256 * generated::QUARTER_AC_CC[generated::AC_TIMER_STEPS / 4 - 1])>>24);
   }
 };
 
 Device device;
 
 void interruptHandlerSERCOM0() { device.uplink.interruptHandlerSERCOM(); }
-void interruptHandlerADC() { device.adc.interruptHandlerADC(); }
+void interruptHandlerTC1() {device.ac.interruptHandlerTC();}
+void interruptHandlerEIC() {}
 
 void initApplication() { device.init(); }
