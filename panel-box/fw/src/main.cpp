@@ -41,7 +41,7 @@ public:
 
     pwm.init(&target::TCC0, target::gclk::CLKCTRL::GEN::GCLK0, PWM_PIN, PWM_MUX, PWM_COUNT, PWM_FREQ);
 
-    ac.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0);
+    ac.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0, &pwm);
 
     // enable interrupts
 
@@ -51,8 +51,6 @@ public:
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::EIC);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TC1);
 
-    pwm.set(0, ((256 * generated::QUARTER_AC_CC[generated::AC_TIMER_STEPS / 4 - 1])>>24)-1);
-    pwm.set(1, (256 * generated::QUARTER_AC_CC[generated::AC_TIMER_STEPS / 4 - 1])>>24);
   }
 };
 
