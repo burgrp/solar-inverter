@@ -10,6 +10,7 @@
         "atsamd",
         "cmsis",
         "dcmotor",
+        "Prescaler",
         "safeboot",
         "samd",
         "systick"

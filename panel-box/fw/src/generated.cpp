@@ -2,9 +2,9 @@ namespace generated {
 
 const int CLK_FREQ_HZ = 8000000;
 const int PWM_TIMER_STEPS = 66;
-const target::tcc::CTRLA::PRESCALER PWM_TIMER_DIVIDER = target::tcc::CTRLA::PRESCALER::DIV1;
+const target::tcc::CTRLA::PRESCALER PWM_TIMER_PRESCALER = target::tcc::CTRLA::PRESCALER::DIV1;
 const int AC_TIMER_STEPS = 624;
-const target::tc::COUNT32::CTRLA::PRESCALER AC_TIMER_DIVIDER = target::tc::COUNT32::CTRLA::PRESCALER::DIV256;
+const target::tc::COUNT16::CTRLA::PRESCALER AC_TIMER_PRESCALER = target::tc::COUNT16::CTRLA::PRESCALER::DIV256;
 
 // values to be multiplied by level <0..100%> represented as <0..256> and shifted right 24 bits
 __attribute__((section(".text")))

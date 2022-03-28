@@ -16,9 +16,20 @@ class PWM {
   }
 
 public:
-  void init(volatile target::tcc::Peripheral *tcc, int pin,
+  void init(volatile target::tcc::Peripheral *tcc,
+            target::gclk::CLKCTRL::GEN clockGen, int pin,
             target::port::PMUX::PMUXE mux, int count, int frequency) {
     this->tcc = tcc;
+
+    target::PM.APBCMASK.setTCC0(true);
+
+    target::GCLK.CLKCTRL = target::GCLK.CLKCTRL.bare()
+                               .setID(target::gclk::CLKCTRL::ID::TCC0)
+                               .setGEN(clockGen)
+                               .setCLKEN(true);
+
+    while (target::GCLK.STATUS.getSYNCBUSY())
+      ;
 
     for (int c = 0; c < count; c++) {
       setPerpheralMux(pin + c, mux);
@@ -30,7 +41,7 @@ public:
     tcc->CTRLBSET = tcc->CTRLBSET.bare().setLUPD(true);
 
     tcc->CTRLA = tcc->CTRLA.bare()
-                     .setPRESCALER(generated::PWM_TIMER_DIVIDER)
+                     .setPRESCALER(generated::PWM_TIMER_PRESCALER)
                      .setENABLE(true);
 
     while (tcc->SYNCBUSY)

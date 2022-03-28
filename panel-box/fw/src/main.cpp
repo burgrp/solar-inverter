@@ -34,26 +34,14 @@ public:
     genericTimer::clkHz = generated::CLK_FREQ_HZ;
     target::SYSCTRL.OSC8M.setPRESC(target::sysctrl::OSC8M::PRESC::_1);
 
-    // TCC0 clocked at 8MHz
-
-    target::PM.APBCMASK.setTCC0(true);
-
-    target::GCLK.CLKCTRL = target::GCLK.CLKCTRL.bare()
-                               .setID(target::gclk::CLKCTRL::ID::TCC0)
-                               .setGEN(target::gclk::CLKCTRL::GEN::GCLK0)
-                               .setCLKEN(true);
-
-    while (target::GCLK.STATUS.getSYNCBUSY())
-      ;
-
     // initialize subsystems
 
     uplink.init(8, &target::SERCOM0, target::gclk::CLKCTRL::GEN::GCLK0,
                 SLAVE_SDA_PIN, SLAVE_SDA_MUX, SLAVE_SCL_PIN, SLAVE_SCL_MUX);
 
-    pwm.init(&target::TCC0, PWM_PIN, PWM_MUX, PWM_COUNT, PWM_FREQ);
+    pwm.init(&target::TCC0, target::gclk::CLKCTRL::GEN::GCLK0, PWM_PIN, PWM_MUX, PWM_COUNT, PWM_FREQ);
 
-    ac.init(&target::TC1);
+    ac.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0);
 
     // enable interrupts
 
