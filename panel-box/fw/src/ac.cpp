@@ -2,6 +2,7 @@ class AC {
 
   volatile target::tc::Peripheral *tc;
   int step;
+  int polarity;
   PWM *pwm;
 
 public:
@@ -32,20 +33,29 @@ public:
     start();
   }
 
-  void start() { step = 0; }
+  void start() {
+    step = 0;
+    polarity = 0;
+  }
 
   void interruptHandlerTC() {
     if (tc->COUNT16.INTFLAG.getOVF()) {
-      pwm->set(0, 256 * generated::QUARTER_AC_CC[step >> 2] >> 24);
-      if (step == generated::AC_TIMER_STEPS - 1) {
-        step = 0;
-        target::PORT.OUTSET = 1 << 8;
-        target::PORT.OUTCLR = 1 << 8;
 
+      target::PORT.OUTSET = 1 << 8;
+
+      pwm->set(polarity, 256 * generated::AC_SINE[step] >> 24);
+      if (step == generated::AC_TIMER_STEPS - 1) {
+
+        step = 0;
+        polarity = ~polarity & 1;
+
+        // target::PORT.OUTTGL = 1 << 8;
       } else {
         step++;
       }
       tc->COUNT16.INTFLAG.setOVF(true);
+
+      target::PORT.OUTCLR = 1 << 8;
     }
   }
 };

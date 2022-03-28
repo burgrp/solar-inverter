@@ -49,8 +49,7 @@ public:
   }
 
   void set(unsigned int polarity, unsigned int duty) {
-    // tcc->CC[0].setCC(0);
-    // tcc->CC[1].setCC(0);
+    tcc->CC[~polarity & 1].setCC(0);
     tcc->CC[polarity].setCC(duty);
   }
 };
