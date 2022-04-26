@@ -4300,10 +4300,10 @@
       (reference "R2") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/2b65da11-1768-4a81-bb67-8fd05c76ed69"
-      (reference "R3") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+      (reference "R3") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/8e5c9fb0-afee-43aa-9476-c1581c886fa5"
-      (reference "R4") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+      (reference "R4") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/db6fb377-7a41-4133-b0e6-ed82184062bf"
       (reference "R5") (unit 1) (value "270R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -4348,10 +4348,10 @@
       (reference "TP5") (unit 1) (value "Voltage Sense Div") (footprint "")
     )
     (path "/0744d3b7-ccbd-4377-83e4-b9b58a44add3"
-      (reference "TP?") (unit 1) (value "Gate Drv Out") (footprint "")
+      (reference "TP6") (unit 1) (value "Gate Drv Out") (footprint "")
     )
     (path "/c797a0e8-4edf-450c-b463-6868853c02cf"
-      (reference "TP?") (unit 1) (value "Gate Drv In") (footprint "")
+      (reference "TP7") (unit 1) (value "Gate Drv In") (footprint "")
     )
     (path "/78c5758c-1346-45ea-808e-3af62c0f0e48"
       (reference "U1") (unit 1) (value "LM317_TO-252") (footprint "Package_TO_SOT_SMD:TO-252-2")
