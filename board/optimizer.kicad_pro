@@ -44,7 +44,7 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "45_degree_only": true,
+          "45_degree_only": false,
           "min_clearance": 0.5
         }
       },
@@ -440,7 +440,7 @@
           "/PWR_PATH1",
           "/PWR_PATH2"
         ],
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "pcb_color": "rgb(255, 141, 139)",
         "schematic_color": "rgb(194, 0, 0)",
         "track_width": 5.0,
         "via_diameter": 3.0,
@@ -462,7 +462,7 @@
           "/SWITCH_PATH1",
           "/SWITCH_PATH2"
         ],
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "pcb_color": "rgb(95, 101, 255)",
         "schematic_color": "rgb(0, 51, 255)",
         "track_width": 1.0,
         "via_diameter": 1.2,
