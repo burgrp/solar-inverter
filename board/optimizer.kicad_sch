@@ -4680,13 +4680,13 @@
       (reference "TP1") (unit 1) (value "Gate Log") (footprint "TestPoint:TestPoint_Pad_D2.0mm")
     )
     (path "/e00a6e0d-0384-4a71-8b00-fa2f58042c57"
-      (reference "TP2") (unit 1) (value "Voltage Sense") (footprint "TestPoint:TestPoint_Pad_D2.0mm")
+      (reference "TP2") (unit 1) (value "Volt. In Scaled") (footprint "TestPoint:TestPoint_Pad_D2.0mm")
     )
     (path "/0744d3b7-ccbd-4377-83e4-b9b58a44add3"
       (reference "TP3") (unit 1) (value "Gate Pwr") (footprint "TestPoint:TestPoint_Pad_D2.0mm")
     )
     (path "/7a85b48c-a7b2-4fd5-8769-e0ceb05b45b1"
-      (reference "TP4") (unit 1) (value "Voltage Sense") (footprint "TestPoint:TestPoint_Pad_D2.0mm")
+      (reference "TP4") (unit 1) (value "Volt. Out Scaled") (footprint "TestPoint:TestPoint_Pad_D2.0mm")
     )
     (path "/bc4e4389-5ece-4bb9-ab06-5953698e4635"
       (reference "U1") (unit 1) (value "MCP1416") (footprint "Package_TO_SOT_SMD:SOT-23-5")
