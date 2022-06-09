@@ -74,12 +74,10 @@ public:
     pwm.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0, GATE_PIN,
              GATE_MUX, GATE_WO_INDEX, GATE_FREQ);
 
-    // ac.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0, &pwm);
-
     // enable interrupts
 
-    // target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
-    //     target::interrupts::External::SERCOM0 & 0x03, 3);
+    target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
+        target::interrupts::External::SERCOM0 & 0x03, 3);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::ADC);
   }
