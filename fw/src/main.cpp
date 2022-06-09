@@ -11,6 +11,18 @@ const target::port::PMUX::PMUXE GATE_MUX = target::port::PMUX::PMUXE::E;
 const int GATE_WO_INDEX = 1;
 const int GATE_FREQ = 120000;
 
+const int VIN_R1 = 10000;
+const int VIN_R2 = 270;
+const int VIN_MULT = (VIN_R1 + VIN_R2) / VIN_R2;
+const ADC::Input ADC_VIN = {pin : 2, ain : 0};
+
+const int VOUT_R1 = 10000;
+const int VOUT_R2 = 270;
+const int VOUT_MULT = (VOUT_R1 + VOUT_R2) / VOUT_R2;
+const ADC::Input ADC_VOUT = {pin : 4, ain : 2};
+
+const ADC::Input ADC_INPUTS[2] = {ADC_VIN, ADC_VOUT};
+
 class Device : public ADC::Callback {
 public:
   Uplink uplink;
@@ -54,7 +66,7 @@ public:
 
     // initialize subsystems
 
-    adc.init(0, 0, this);
+    adc.init(ADC_INPUTS, sizeof(ADC_INPUTS) / sizeof(ADC::Input), this);
 
     uplink.init(8, &target::SERCOM0, target::gclk::CLKCTRL::GEN::GCLK0,
                 SLAVE_SDA_PIN, SLAVE_SDA_MUX, SLAVE_SCL_PIN, SLAVE_SCL_MUX);
@@ -66,14 +78,20 @@ public:
 
     // enable interrupts
 
-    target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
-        target::interrupts::External::SERCOM0 & 0x03, 3);
+    // target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
+    //     target::interrupts::External::SERCOM0 & 0x03, 3);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::ADC);
   }
 
-  void adcRead(int ain, int value) {
-    uplink.state.vout = value;
+  void adcRead(ADC::Input input, int scaled) {
+    if (input.ain == ADC_VIN.ain) {
+      int real = VIN_MULT * scaled;
+      uplink.state.vin = real >> 1;
+    } else if (input.ain == ADC_VOUT.ain) {
+      int real = VOUT_MULT * scaled;
+      uplink.state.vout = real >> 1;
+    }
   }
 };
 

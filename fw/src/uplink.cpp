@@ -1,6 +1,6 @@
 
 
-class Uplink: public atsamd::i2c::Slave {
+class Uplink : public atsamd::i2c::Slave {
   enum Command { NONE = 0, ENABLE = 1 };
   struct __attribute__((packed)) {
     unsigned char command = Command::NONE;
@@ -16,7 +16,7 @@ public:
     unsigned char protocol = 1;
     unsigned char error = 0;
     unsigned short vin = 0;
-    unsigned short vout = 80 * 500;    
+    unsigned short vout = 0;
   } state;
 
   void init(int address, volatile target::sercom::Peripheral *sercom,
@@ -28,8 +28,7 @@ public:
   }
 
   virtual int getTxByte(int index) {
-    return index < sizeof(state) ? ((unsigned char *)&state)[index]
-                                       : 0xFF;
+    return index < sizeof(state) ? ((unsigned char *)&state)[index] : 0xFF;
   }
 
   bool commandIs(Command command, int index, int value, int paramsSize) {
