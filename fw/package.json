@@ -23,7 +23,7 @@
   "silicon": {
     "sources": [
       "src/adc.cpp",
-      "src/gate.cpp",
+      "src/pwm.cpp",
       "src/uplink.cpp",
       "src/main.cpp"
     ],

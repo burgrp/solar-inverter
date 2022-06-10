@@ -92,7 +92,7 @@ namespace target {
 #include "/home/paul/git/inverter/fw/node_modules/@si14/si-atsamd-i2c/slave.cpp"
 #include "/home/paul/git/inverter/fw/node_modules/@si14/si-atsamd-safeboot/safeboot.cpp"
 #include "/home/paul/git/inverter/fw/src/adc.cpp"
-#include "/home/paul/git/inverter/fw/src/gate.cpp"
+#include "/home/paul/git/inverter/fw/src/pwm.cpp"
 #include "/home/paul/git/inverter/fw/src/uplink.cpp"
 #include "/home/paul/git/inverter/fw/src/main.cpp"
 

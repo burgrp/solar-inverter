@@ -56,8 +56,6 @@ public:
     while (target::GCLK.STATUS.getSYNCBUSY())
       ;
 
-    // MCU now clocked at 48MHz
-
     genericTimer::clkHz = 48E6;
 
     // debug - output generator 0 to PA24
@@ -78,6 +76,7 @@ public:
 
     target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
         target::interrupts::External::SERCOM0 & 0x03, 3);
+
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::ADC);
   }
@@ -89,6 +88,7 @@ public:
     } else if (input.ain == ADC_VOUT.ain) {
       int real = VOUT_MULT * scaled;
       uplink.state.vout = real >> 1;
+      target::PORT.OUTTGL = 1 << LED_PIN;
     }
   }
 };
