@@ -3872,25 +3872,6 @@
     (pin "1" (uuid cd6f0bf7-7c5d-4324-bc73-22f1b141d5ef))
   )
 
-  (symbol (lib_id "power:+3V3") (at 31.75 33.02 270) (unit 1)
-    (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid c0a47382-b6e3-4ddf-99b2-bf7c716b2a39)
-    (default_instance (reference "#PWR") (unit 1) (value "+3V3") (footprint ""))
-    (property "Reference" "#PWR" (id 0) (at 27.94 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "+3V3" (id 1) (at 34.925 33.3066 90)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "" (id 2) (at 31.75 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 31.75 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid a473c254-f40b-4c99-b006-cd1417e1bb95))
-  )
-
   (symbol (lib_id "Device:C_Small") (at 168.91 91.44 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid c307222f-a855-4b9d-b0e9-8911164717a3)
@@ -4297,33 +4278,11 @@
     (pin "1" (uuid ea05f13c-ef20-4350-a7d8-7e8eebdcc8eb))
   )
 
-  (symbol (lib_id "power:PWR_FLAG") (at 31.75 33.02 90) (unit 1)
-    (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid f7d214c0-3112-4323-976f-def2e85c4b69)
-    (default_instance (reference "#FLG") (unit 1) (value "PWR_FLAG") (footprint ""))
-    (property "Reference" "#FLG" (id 0) (at 29.845 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "PWR_FLAG" (id 1) (at 28.5751 33.3066 90)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "" (id 2) (at 31.75 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (id 3) (at 31.75 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid e8df0fc6-9be4-44b2-9532-c8ee50dcac7a))
-  )
-
   (sheet_instances
     (path "/" (page "1"))
   )
 
   (symbol_instances
-    (path "/f7d214c0-3112-4323-976f-def2e85c4b69"
-      (reference "#FLG01") (unit 1) (value "PWR_FLAG") (footprint "")
-    )
     (path "/3889ce09-ac85-490f-87ba-3af56aea98a6"
       (reference "#FLG02") (unit 1) (value "PWR_FLAG") (footprint "")
     )
@@ -4332,9 +4291,6 @@
     )
     (path "/5efcd507-4b73-479f-bfc4-57622c515a09"
       (reference "#FLG0101") (unit 1) (value "PWR_FLAG") (footprint "")
-    )
-    (path "/c0a47382-b6e3-4ddf-99b2-bf7c716b2a39"
-      (reference "#PWR01") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/e7b94e1f-1f0b-402e-988e-668013710a5c"
       (reference "#PWR02") (unit 1) (value "GND") (footprint "")
@@ -4594,11 +4550,11 @@
     (path "/78c5758c-1346-45ea-808e-3af62c0f0e48"
       (reference "U2") (unit 1) (value "LM317_TO-252") (footprint "Package_TO_SOT_SMD:TO-252-2")
     )
+    (path "/348df945-ad6d-4d47-b930-3dfbe85d5468"
+      (reference "U3") (unit 1) (value "AP1117-33") (footprint "Package_TO_SOT_SMD:SOT-223-3_TabPin2")
+    )
     (path "/4289a6dd-e222-4311-8514-5facfc0b2875"
       (reference "U4") (unit 1) (value "ATSAMD09C13A-SS") (footprint "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm")
-    )
-    (path "/348df945-ad6d-4d47-b930-3dfbe85d5468"
-      (reference "U?") (unit 1) (value "AP1117-33") (footprint "Package_TO_SOT_SMD:SOT-223-3_TabPin2")
     )
     (path "/be4ac40d-90a1-4523-85d9-2abd4bd40819"
       (reference "X1") (unit 1) (value "SWD") (footprint "Drake:SWD")
