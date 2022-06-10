@@ -1,8 +1,3 @@
-
-/**
- * @brief PWM for power MOSFET switching
- * Assumes TCC is clocked on 8MHz
- */
 class PWM {
   volatile target::tc::Peripheral *tc;
 
