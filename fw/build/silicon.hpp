@@ -94,6 +94,7 @@ namespace target {
 #include "/home/paul/git/inverter/fw/src/adc.cpp"
 #include "/home/paul/git/inverter/fw/src/pwm.cpp"
 #include "/home/paul/git/inverter/fw/src/uplink.cpp"
+#include "/home/paul/git/inverter/fw/src/controller.cpp"
 #include "/home/paul/git/inverter/fw/src/main.cpp"
 
 #endif // SILICON_HPP

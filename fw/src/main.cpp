@@ -28,6 +28,7 @@ public:
   Uplink uplink;
   PWM pwm;
   ADC adc;
+  Controller controller;
 
   void init() {
 
@@ -72,6 +73,8 @@ public:
     pwm.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0, GATE_PIN,
              GATE_MUX, GATE_WO_INDEX, GATE_FREQ);
 
+    controller.init(&uplink, &pwm);
+
     // enable interrupts
 
     target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
@@ -83,12 +86,9 @@ public:
 
   void adcRead(ADC::Input input, int scaled) {
     if (input.ain == ADC_VIN.ain) {
-      int real = VIN_MULT * scaled;
-      uplink.state.vin = real >> 1;
+      controller.setVIN(VIN_MULT * scaled);
     } else if (input.ain == ADC_VOUT.ain) {
-      int real = VOUT_MULT * scaled;
-      uplink.state.vout = real >> 1;
-      target::PORT.OUTTGL = 1 << LED_PIN;
+      controller.setVOUT(VOUT_MULT * scaled);
     }
   }
 };

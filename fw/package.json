@@ -25,6 +25,7 @@
       "src/adc.cpp",
       "src/pwm.cpp",
       "src/uplink.cpp",
+      "src/controller.cpp",
       "src/main.cpp"
     ],
     "symbols": {
