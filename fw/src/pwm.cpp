@@ -17,13 +17,13 @@ public:
 
   void init(volatile target::tc::Peripheral *tc,
             target::gclk::CLKCTRL::GEN clockGen, int pin,
-            target::port::PMUX::PMUXE mux, int woIndex, int frequency) {
+            target::port::PMUX::PMUXE mux, int woIndex) {
     
     this->tc = tc;
     this->woIndex = woIndex;
 
     // 200kHz PWM out of 48MHz clock - make sure it fits in 8bits
-    fullDuty = 48E6/200E3;
+    fullDuty = 48E6/1000E3;
 
     int tcIndex = ((int)(void *)tc - (int)(void *)&target::TC1) /
                   ((int)(void *)&target::TC2 - (int)(void *)&target::TC1);

@@ -9,7 +9,6 @@ const target::port::PMUX::PMUXE SLAVE_SCL_MUX = target::port::PMUX::PMUXE::C;
 const int GATE_PIN = 5;
 const target::port::PMUX::PMUXE GATE_MUX = target::port::PMUX::PMUXE::E;
 const int GATE_WO_INDEX = 1;
-const int GATE_FREQ = 120000;
 
 const int VIN_R1 = 10000;
 const int VIN_R2 = 270;
@@ -71,7 +70,7 @@ public:
                 SLAVE_SDA_PIN, SLAVE_SDA_MUX, SLAVE_SCL_PIN, SLAVE_SCL_MUX);
 
     pwm.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0, GATE_PIN,
-             GATE_MUX, GATE_WO_INDEX, GATE_FREQ);
+             GATE_MUX, GATE_WO_INDEX);
 
     controller.init(&uplink, &pwm);
 

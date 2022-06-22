@@ -8,7 +8,7 @@ public:
   int duty;
   int maxDuty;
 
-  int target_mV = 20000;
+  int target_mV = 24000;
 
   void init(Uplink *uplink, PWM *pwm) {
     this->uplink = uplink;
@@ -30,13 +30,26 @@ public:
     update();
   }
 
+  int lastError_mV = 0;
+
   void update() {
     
-    if (vout_mV < target_mV) {
-        duty++;
-    } else {
-        duty--;
-    }
+    int error_mV = vout_mV - target_mV + lastError_mV;
+    lastError_mV = error_mV;
+
+    // const int maxError_mV = 100;
+    // if (error_mV > maxError_mV) {
+    //   error_mV = maxError_mV;
+    // } else if (error_mV < -maxError_mV) {
+    //   error_mV = -maxError_mV;
+    // }   
+    duty = duty - error_mV >> 15;
+
+    // if (vout_mV < target_mV) {
+    //     duty+=1;
+    // } else {
+    //     duty-=1;
+    // }
 
     if (duty < 0) {
         duty = 0;
