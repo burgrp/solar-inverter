@@ -10,17 +10,12 @@ const int GATE_PIN = 5;
 const target::port::PMUX::PMUXE GATE_MUX = target::port::PMUX::PMUXE::E;
 const int GATE_WO_INDEX = 1;
 
-const int VIN_R1 = 10000;
-const int VIN_R2 = 270;
-const int VIN_MULT = (VIN_R1 + VIN_R2) / VIN_R2;
-const ADC::Input ADC_VIN = {pin : 2, ain : 0};
+const int VC_R1 = 10000;
+const int VC_R2 = 270;
+const int VC_MULT = (VC_R1 + VC_R2) / VC_R2;
+const ADC::Input ADC_VC = {pin : 2, ain : 0};
 
-const int VOUT_R1 = 10000;
-const int VOUT_R2 = 270;
-const int VOUT_MULT = (VOUT_R1 + VOUT_R2) / VOUT_R2;
-const ADC::Input ADC_VOUT = {pin : 4, ain : 2};
-
-const ADC::Input ADC_INPUTS[2] = {ADC_VIN, ADC_VOUT};
+const ADC::Input ADC_INPUTS[1] = {ADC_VC};
 
 class Device : public ADC::Callback {
 public:
@@ -84,10 +79,8 @@ public:
   }
 
   void adcRead(ADC::Input input, int scaled) {
-    if (input.ain == ADC_VIN.ain) {
-      controller.setVIN(VIN_MULT * scaled);
-    } else if (input.ain == ADC_VOUT.ain) {
-      controller.setVOUT(VOUT_MULT * scaled);
+    if (input.ain == ADC_VC.ain) {
+      controller.setVCap(VC_MULT * scaled);
     }
   }
 };

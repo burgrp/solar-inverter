@@ -15,8 +15,7 @@ public:
   struct __attribute__((packed)) {
     unsigned char protocol = 1;
     unsigned char error = 0;
-    unsigned short vin_mV = 0;
-    unsigned short vout_mV = 0;    
+    unsigned short vCap_mV = 0;
     unsigned char actDuty = 0;
     unsigned char maxDuty = 0;
   } state;

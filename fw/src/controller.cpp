@@ -3,8 +3,7 @@ public:
   Uplink *uplink;
   PWM *pwm;
 
-  int vin_mV;
-  int vout_mV;
+  int vCap_mV;
   int duty;
   int maxDuty;
 
@@ -14,19 +13,14 @@ public:
     this->uplink = uplink;
     this->pwm = pwm;
 
-    maxDuty = pwm->fullDuty / 2;
+    maxDuty = pwm->fullDuty;
     uplink->state.maxDuty = maxDuty;
 
     update();
   }
 
-  void setVIN(int mV) {
-    vin_mV = mV;
-    update();
-  }
-
-  void setVOUT(int mV) {
-    vout_mV = mV;
+  void setVCap(int mV) {
+    vCap_mV = mV;
     update();
   }
 
@@ -34,7 +28,7 @@ public:
 
   void update() {
     
-    int error_mV = vout_mV - target_mV + lastError_mV;
+    int error_mV = vCap_mV - target_mV + lastError_mV;
     lastError_mV = error_mV;
 
     // const int maxError_mV = 100;
@@ -59,8 +53,7 @@ public:
 
     pwm->set(duty);
 
-    uplink->state.vin_mV = vin_mV;
-    uplink->state.vout_mV = vout_mV;
+    uplink->state.vCap_mV = vCap_mV;
     uplink->state.actDuty = duty;
   }
 };
