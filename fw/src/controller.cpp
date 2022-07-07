@@ -14,7 +14,7 @@ public:
     this->pwm = pwm;
 
     maxDuty = pwm->fullDuty;
-    uplink->state.maxDuty = maxDuty;
+    uplink->txData.maxDuty = maxDuty;
 
     update();
   }
@@ -53,7 +53,7 @@ public:
 
     pwm->set(duty);
 
-    uplink->state.vCap_mV = vCap_mV;
-    uplink->state.actDuty = duty;
+    uplink->txData.vCap_mV = vCap_mV;
+    uplink->txData.actDuty = duty;
   }
 };

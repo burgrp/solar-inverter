@@ -1,10 +1,7 @@
 const int LED_PIN = 8;
 const int SAFE_BOOT_PIN = 9;
 
-const int SLAVE_SDA_PIN = 14;
-const int SLAVE_SCL_PIN = 15;
-const target::port::PMUX::PMUXE SLAVE_SDA_MUX = target::port::PMUX::PMUXE::C;
-const target::port::PMUX::PMUXE SLAVE_SCL_MUX = target::port::PMUX::PMUXE::C;
+const int DATA_PIN = 14;
 
 const int GATE_PIN = 5;
 const target::port::PMUX::PMUXE GATE_MUX = target::port::PMUX::PMUXE::E;
@@ -61,8 +58,8 @@ public:
 
     adc.init(ADC_INPUTS, sizeof(ADC_INPUTS) / sizeof(ADC::Input), this);
 
-    uplink.init(8, &target::SERCOM0, target::gclk::CLKCTRL::GEN::GCLK0,
-                SLAVE_SDA_PIN, SLAVE_SDA_MUX, SLAVE_SCL_PIN, SLAVE_SCL_MUX);
+    uplink.init(8, &target::TC2, target::gclk::CLKCTRL::GEN::GCLK0,
+                DATA_PIN);
 
     pwm.init(&target::TC1, target::gclk::CLKCTRL::GEN::GCLK0, GATE_PIN,
              GATE_MUX, GATE_WO_INDEX);
@@ -71,10 +68,10 @@ public:
 
     // enable interrupts
 
-    target::NVIC.IPR[target::interrupts::External::SERCOM0 >> 2].setPRI(
+    target::NVIC.IPR[target::interrupts::External::TC2 >> 2].setPRI(
         target::interrupts::External::SERCOM0 & 0x03, 3);
 
-    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::SERCOM0);
+    target::NVIC.ISER.setSETENA(1 << target::interrupts::External::TC2);
     target::NVIC.ISER.setSETENA(1 << target::interrupts::External::ADC);
   }
 
@@ -87,7 +84,7 @@ public:
 
 Device device;
 
-void interruptHandlerSERCOM0() { device.uplink.interruptHandlerSERCOM(); }
+void interruptHandlerTC2() { device.uplink.interruptHandlerTC(); }
 void interruptHandlerADC() { device.adc.interruptHandlerADC(); }
 
 void initApplication() { device.init(); }

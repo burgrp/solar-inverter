@@ -1,54 +1,89 @@
 
 
-class Uplink : public atsamd::i2c::Slave {
-  enum Command { NONE = 0, ENABLE = 1 };
-  struct __attribute__((packed)) {
-    unsigned char command = Command::NONE;
-    union {
-      struct __attribute__((packed)) {
-        unsigned char enabled;
-      } enable;
-    };
-  } rxBuffer;
+class Uplink : public genericTimer::Timer {
+
+  volatile target::tc::Peripheral *tc;
+  int pinDATA;
+
+  int bitClock;
 
 public:
   struct __attribute__((packed)) {
+    unsigned char address;
     unsigned char protocol = 1;
     unsigned char error = 0;
     unsigned short vCap_mV = 0;
     unsigned char actDuty = 0;
     unsigned char maxDuty = 0;
-  } state;
+  } txData;
 
-  void init(int address, volatile target::sercom::Peripheral *sercom,
-            target::gclk::CLKCTRL::GEN clockGen, int pinSDA,
-            target::port::PMUX::PMUXE muxSDA, int pinSCL,
-            target::port::PMUX::PMUXE muxSCL) {
-    Slave::init(address, 0, atsamd::i2c::AddressMode::MASK, sercom, clockGen,
-                pinSDA, muxSDA, pinSCL, muxSCL);
+  void init(int address, volatile target::tc::Peripheral *tc,
+            target::gclk::CLKCTRL::GEN clockGen, int pinDATA) {
+
+    this->tc = tc;
+    this->pinDATA = pinDATA;
+
+    txData.address = address;
+
+    int tcIndex = ((int)(void *)tc - (int)(void *)&target::TC1) /
+                  ((int)(void *)&target::TC2 - (int)(void *)&target::TC1);
+
+    target::PM.APBCMASK.setTC(tcIndex + 1, true);
+
+    target::GCLK.CLKCTRL = target::GCLK.CLKCTRL.bare()
+                               .setID(target::gclk::CLKCTRL::ID::TC1_TC2)
+                               .setGEN(clockGen)
+                               .setCLKEN(true);
+
+    target::PORT.DIRSET = 1 << pinDATA;
+
+    tc->COUNT8.CTRLA =
+        tc->COUNT8.CTRLA.bare()
+            .setMODE(target::tc::COUNT8::CTRLA::MODE::COUNT8)
+            .setPRESCALER(target::tc::COUNT8::CTRLA::PRESCALER::DIV1024);
+
+    // 1kBd data rate from 48MHz clock
+    tc->COUNT8.PER = tc->COUNT8.PER.bare().setPER(48E6 / 1024 / 1000);
+
+    tc->COUNT8.INTENSET.setOVF(true);
+
+    scheduleTransmit();
   }
 
-  virtual int getTxByte(int index) {
-    return index < sizeof(state) ? ((unsigned char *)&state)[index] : 0xFF;
-  }
+  void scheduleTransmit() { start(100); }
 
-  bool commandIs(Command command, int index, int value, int paramsSize) {
-    return rxBuffer.command == command && index == paramsSize;
-  }
+  void interruptHandlerTC() {
+    target::tc::COUNT8::INTFLAG::Register flags = tc->COUNT8.INTFLAG.copy();
 
-  virtual bool setRxByte(int index, int value) {
+    if (flags.getOVF()) {
+      // target::PORT.OUTTGL = 1 << pinDATA;
 
-    if (index < sizeof(rxBuffer)) {
-      ((unsigned char *)&rxBuffer)[index] = value;
+      int clockPhase = bitClock & 1;
+      int bitIndex = (bitClock >> 1) & 7;
+      int byteIndex = bitClock >> 4;
 
-      if (commandIs(Command::ENABLE, index, value, sizeof(rxBuffer.enable))) {
+      int out = ((((char*)(void*)&txData)[byteIndex] >> bitIndex) & 1) ^ clockPhase;
+
+      if (out) {
+        target::PORT.OUTSET = 1 << pinDATA;
+      } else {
+        target::PORT.OUTCLR = 1 << pinDATA;
+      }      
+
+      bitClock++;
+
+      if (bitClock >> 4 == sizeof(txData)) {
+        tc->COUNT8.CTRLA.setENABLE(false);
+        scheduleTransmit();
       }
-
-      return true;
-
-    } else {
-      return false;
     }
+
+    tc->COUNT8.INTFLAG = flags;
+  }
+
+  virtual void onTimer() {
+    bitClock = 0;
+    tc->COUNT8.CTRLA.setENABLE(true);
   }
 
 } slave;
